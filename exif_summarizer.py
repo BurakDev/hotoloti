@@ -45,24 +45,15 @@ class Camera:
     # init
     def __init__(self, make, model, date, filename):
         # if invalid params are passed, sets attributes to invalid values
-        if make == "":
-            self.camera_make = "EMPTY"
-        else:
-            self.camera_make = make
-        if model == "":
-            self.camera_model = "EMPTY"
-        else:
-            self.camera_model = model
+        self.camera_make = make or "EMPTY"
+        self.camera_model = model or "EMPTY"
         self.counter = 1
         self.fnamelist = [filename]
         if date == "":
             # oldest set to max and newest set to min:
             # ----> this allows future updates
-            self.oldest = datetime.datetime.max
-            self.newest = datetime.datetime.min
-        else:
-            self.oldest = date
-            self.newest = date
+        self.oldest = date or datetime.datetime.max
+        self.newest = date or datetime.datetime.min
 
     # comparison operator
     def __cmp__(self, other):
@@ -94,15 +85,15 @@ def main(argv):
         indir = options.indirectory
 
     # checks if the input folder name is an actual directory
-    if os.path.isdir(indir) == False:
+    if not os.path.isdir(indir):
         parser.print_help()
-        print "Please specify a folder name for -i option!"
+        print("Please specify a folder name for -i option!")
         sys.exit(1)
 
     # checks if at least an output format was selected
     if options.csv == options.web == False:
         parser.print_help()
-        print "Please specify at least an output format!"
+        print("Please specify at least an output format!")
         sys.exit(1)
 
     # reset global counter of processed items
@@ -116,7 +107,7 @@ def main(argv):
 
     # scan all the files contained into the directory (shallow or recursive)
     try:
-        if options.rec == True:
+        if options.rec:
             for root, dirs, files in os.walk(indir):
                 for fname in files:
                     process_file(join(root,fname),options)
@@ -126,20 +117,17 @@ def main(argv):
                 process_file(join(indir,fname),options)
                 
     except KeyboardInterrupt:
-        print "\nScanning interrupted by keyboard"
+        print("\nScanning interrupted by keyboard")
 
     ##------------------------------------------------------------------------##
     # output
-    outfile = cfile = wfile = None
-    if options.outfilename != None:
-        outfile = options.outfilename
-    else:
-        outfile = "exif_summarizer_output"
+    cfile = wfile = None
+    outfile = options.outfilename or "exif_summarizer_output"
 
     ##----------
     # csv output
     if options.csv:
-        cfile = file('%s.csv' % outfile,'wb')
+        cfile = open('%s.csv' % outfile,'wb')
         cfile.write('Make,Model,#photos,Oldest(Exif.Image.DateTimeOriginal),Newest(Exif.Image.DateTimeOriginal)\n')
         for i in camera_list:
             cfile.write('{},{},{},{},{}\n'.format(i.camera_make, i.camera_model, i.counter, i.oldest, i.newest))
@@ -165,7 +153,7 @@ def main(argv):
 ##            mid = GanttCategory('Mid Usage (<500)', 'fc0')
 ##            high = GanttCategory('High Usage (>500)', 'c00')
             
-        wfile = file('%s.html' % outfile,'wb')
+        wfile = open('%s.html' % outfile,'wb')
         # writes page header
         wfile.write('<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"\n')
         wfile.write('"http://www.w3.org/TR/html4/loose.dtd">\n')
@@ -278,7 +266,7 @@ def main(argv):
 
     # END
     warn.close()    
-    print '\nProcess ended with {} warnings.'.format(warnings)
+    print('\nProcess ended with {} warnings.'.format(warnings))
   
 
 ################################################################################
@@ -331,7 +319,7 @@ def process_file(filename,options):
             
     # else append the new camera
     else:
-        # print "\nNew entry {}".format(curr_camera.camera_model)
+        # print("\nNew entry {}".format(curr_camera.camera_model))
         camera_list.append(curr_camera)
         
 
@@ -514,7 +502,7 @@ function ts_resortTable(lnk, clid) {
 	sortfn = ts_sort_caseinsensitive;
 	if (itm.match(/^\d\d[\/\.-][a-zA-z][a-zA-Z][a-zA-Z][\/\.-]\d\d\d\d$/)) sortfn = ts_sort_date;
 	if (itm.match(/^\d\d[\/\.-]\d\d[\/\.-]\d\d\d{2}?$/)) sortfn = ts_sort_date;
-	if (itm.match(/^-?[�$�ۢ�]\d/)) sortfn = ts_sort_numeric;
+	if (itm.match(/^-?[£$Û¢´]\d/)) sortfn = ts_sort_numeric;
 	if (itm.match(/^-?(\d+[,\.]?)+(E[-+][\d]+)?%?$/)) sortfn = ts_sort_numeric;
 	SORT_COLUMN_INDEX = column;
 	var firstRow = new Array();

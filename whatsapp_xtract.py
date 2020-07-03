@@ -41,26 +41,14 @@ class Chatsession:
 
         # if invalid params are passed, sets attributes to invalid values
         # primary key
-        if pkcs == "":
-            self.pk_cs = -1
-        else:
-            self.pk_cs = pkcs
+        self.pk_cs = pkcs or -1
         # contact nick
-        if contactname == "":
-            self.contact_name = "EMPTY"
-        else:
-            self.contact_name = contactname
+        self.contact_name = contactname or "EMPTY"
             
         # contact id
-        if contactid == "":
-            self.contact_id = "EMPTY"
-        else:
-            self.contact_id = contactid
+        self.contact_id = contactid or "EMPTY"
         # contact msg counter
-        if contactmsgcount == "":
-            self.contact_msg_count = -1
-        else:
-            self.contact_msg_count = contactmsgcount
+        self.contact_msg_count = contactmsgcount or -1
 
         # chat session messages
         self.msg_list = []
@@ -80,35 +68,20 @@ class Message:
 
         # if invalid params are passed, sets attributes to invalid values
         # primary key
-        if pkmsg == "":
-            self.pk_msg = -1
-        else:
-            self.pk_msg = pkmsg
+        self.pk_msg = pkmsg or -1
         # "from me" flag
-        if fromme == "":
-            self.from_me = -1
-        else:
-            self.from_me = fromme
+        self.from_me = fromme or -1
         # message timestamp
         if msgdate == "":
             self.msg_date = "N/A"
         else:
             self.msg_date = datetime.datetime.fromtimestamp(int(msgdate)+11323*60*1440)
         # message text
-        if text == "":
-            self.msg_text = "EMPTY"
-        else:
-            self.msg_text = text
+        self.msg_text = text or "EMPTY"
         # message sender
-        if contactfrom == "":
-            self.contact_from == "EMPTY"
-        else:
-            self.contact_from = contactfrom
+        self.contact_from = contactfrom or "EMPTY"
         # message receiver
-        if contactto == "":
-            self.contact_to == "EMPTY"
-        else:
-            self.contact_to = contactto        
+        self.contact_to = contactto or "EMPTY"
 
     # comparison operator
     def __cmp__(self, other):
@@ -133,7 +106,7 @@ def main(argv):
         parser.print_help()
         sys.exit(1)
     if not os.path.exists(options.infile):
-        print '"{}" file is not found!'.format(options.infile)
+        print('"{}" file is not found!'.format(options.infile))
         sys.exit(1)
 
     # connects to the database
@@ -146,8 +119,8 @@ def main(argv):
         for chats in c:
             curr_chat = Chatsession(chats[0],chats[10],chats[8],chats[6])
             chat_session_list.append(curr_chat)
-    except sqlite3.Error, msg:
-        print 'Error: {}'.format(msg)
+    except sqlite3.Error as msg:
+        print('Error: {}'.format(msg))
         sys.exit(1)
 
     # for each chat session, gets all messages
@@ -158,8 +131,8 @@ def main(argv):
                 curr_message = Message(msgs[0],msgs[3],msgs[9],msgs[10],msgs[12],msgs[11])
                 chats.msg_list.append(curr_message)
 
-        except sqlite3.Error, msg:
-            print 'Error: {}'.format(msg)
+        except sqlite3.Error as msg:
+            print('Error: {}'.format(msg))
             sys.exit(1)
 
     # gets the db owner id
@@ -169,12 +142,12 @@ def main(argv):
             owner = (c.fetchone()[0]).split('/')[0]
         except:
             owner = "NotAvailable"
-    except sqlite3.Error, msg:
-        print 'Error: {}'.format(msg)
+    except sqlite3.Error as msg:
+        print('Error: {}'.format(msg))
         sys.exit(1)
 
     # OUTPUT
-    wfile = file('%s.html' % owner,'wb')
+    wfile = open('%s.html' % owner,'wb')
     # writes page header
     wfile.write('<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"\n')
     wfile.write('"http://www.w3.org/TR/html4/loose.dtd">\n')
@@ -409,7 +382,7 @@ function ts_resortTable(lnk, clid) {
 	sortfn = ts_sort_caseinsensitive;
 	if (itm.match(/^\d\d[\/\.-][a-zA-z][a-zA-Z][a-zA-Z][\/\.-]\d\d\d\d$/)) sortfn = ts_sort_date;
 	if (itm.match(/^\d\d[\/\.-]\d\d[\/\.-]\d\d\d{2}?$/)) sortfn = ts_sort_date;
-	if (itm.match(/^-?[�$�ۢ�]\d/)) sortfn = ts_sort_numeric;
+	if (itm.match(/^-?[£$Û¢´]\d/)) sortfn = ts_sort_numeric;
 	if (itm.match(/^-?(\d+[,\.]?)+(E[-+][\d]+)?%?$/)) sortfn = ts_sort_numeric;
 	SORT_COLUMN_INDEX = column;
 	var firstRow = new Array();
